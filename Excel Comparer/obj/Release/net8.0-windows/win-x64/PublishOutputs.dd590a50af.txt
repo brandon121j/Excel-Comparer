@@ -1,0 +1,2 @@
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\publish\win-x64\Excel Comparer.pdb
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\publish\win-x64\Excel Comparer.exe

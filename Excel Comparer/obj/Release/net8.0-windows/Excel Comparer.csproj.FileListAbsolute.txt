@@ -1,0 +1,32 @@
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\Excel Comparer.exe
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\Excel Comparer.deps.json
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\Excel Comparer.runtimeconfig.json
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\Excel Comparer.dll
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\Excel Comparer.pdb
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\ClosedXML.dll
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\DocumentFormat.OpenXml.dll
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\ExcelNumberFormat.dll
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\Irony.dll
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\SixLabors.Fonts.dll
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\System.Data.OleDb.dll
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\XLParser.dll
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\bin\Release\net8.0-windows\runtimes\win\lib\net7.0\System.Data.OleDb.dll
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel Comparer.csproj.AssemblyReference.cache
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel_Comparer.Common.CircularButton.resources
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel_Comparer.Custom_Controls.CompareCriteriaControl.resources
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel_Comparer.Custom_Controls.GenerateComparisonControl.resources
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel_Comparer.Custom_Controls.ImportFile1Control.resources
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel_Comparer.Custom_Controls.ImportFile2Control.resources
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel_Comparer.Form1.resources
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel_Comparer.Properties.Resources.resources
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel Comparer.csproj.GenerateResource.cache
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel Comparer.GeneratedMSBuildEditorConfig.editorconfig
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel Comparer.AssemblyInfoInputs.cache
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel Comparer.AssemblyInfo.cs
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel Comparer.csproj.CoreCompileInputs.cache
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel Comparer.csproj.CopyComplete
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel Comparer.dll
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\refint\Excel Comparer.dll
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel Comparer.pdb
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\Excel Comparer.genruntimeconfig.cache
+Z:\Code (VS)\Projects\Excel Comparer\Excel Comparer\obj\Release\net8.0-windows\ref\Excel Comparer.dll
