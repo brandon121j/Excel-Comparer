@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Diagnostics;
 using System.Text;
 using ClosedXML.Excel;
 
@@ -69,7 +70,6 @@ public class Compare
 
         _bw.ReportProgress(25, "Comparing Excel Data");
 
-
         var (excel1PK, excel2Pk) = PrimaryKeys;
 
         foreach (DataRow row in excel1DT.Rows)
@@ -119,7 +119,7 @@ public class Compare
     }
 
 
-    private static XLWorkbook ConvertToExcel(List<string> differences)
+    private static XLWorkbook ConvertToExcel(IReadOnlyList<string> differences)
     {
         using XLWorkbook ogWorkbook = new(ExcelData.ExcelFile1);
 
@@ -142,19 +142,16 @@ public class Compare
         for (int i = 2, x = 0; i < lastRow + 1; i++, x++)
         {
             worksheet.Cell(i, diffCol).Value = differences[x];
-            switch (differences[x].Split()[0])
+
+            worksheet.Range(worksheet.Cell(i, 1), worksheet.Cell(i, diffCol)).Style.Fill.BackgroundColor = differences[x].Split()[0] switch
             {
-                case "UPDATED:":
-                    worksheet.Range(worksheet.Cell(i, 1), worksheet.Cell(i, diffCol)).Style.Fill.BackgroundColor = XLColor.Yellow;
-                    break;
-                case "NO":
-                    worksheet.Range(worksheet.Cell(i, 1), worksheet.Cell(i, diffCol)).Style.Fill.BackgroundColor = XLColor.Green;
-                    break;
-                case "DELETED":
-                    worksheet.Range(worksheet.Cell(i, 1), worksheet.Cell(i, diffCol)).Style.Fill.BackgroundColor = XLColor.Red;
-                    break;
-            }
+                "UPDATED:" => XLColor.Yellow,
+                "NO" => XLColor.Green,
+                "DELETED" => XLColor.Red,
+                _ => worksheet.Range(worksheet.Cell(i, 1), worksheet.Cell(i, diffCol)).Style.Fill.BackgroundColor
+            };
         }
+
 
         worksheet.Tables.FirstOrDefault().Theme = new XLTableTheme("None");
 
@@ -165,7 +162,7 @@ public class Compare
 
     private static DataTable DataFetcher(string currentWB, string selection = "*", string name = "Excel1")
     {
-        DataTable dataTable = new();
+        DataTable dataTable;
 
         try
         {
@@ -220,13 +217,4 @@ public class Compare
 
         return newDataTable;
     }
-
-
-
-
-
-
-
-
-
 }

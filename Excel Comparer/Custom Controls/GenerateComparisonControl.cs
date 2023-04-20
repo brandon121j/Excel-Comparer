@@ -132,14 +132,4 @@ public partial class GenerateComparisonControl : UserControl
     }
 
     private void CancelBT_Click(object sender, EventArgs e) => _compare?.Cancel();
-
-    private void Excel1LV_DoubleClick(object sender, EventArgs e)
-    {
-
-    }
-
-    private void Excel2LV_DoubleClick(object sender, EventArgs e)
-    {
-
-    }
 }
