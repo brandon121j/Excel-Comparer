@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using ClosedXML.Excel;
 using Excel_Comparer.Common;
 
@@ -125,10 +126,32 @@ public partial class GenerateComparisonControl : UserControl
         {
             workbook?.SaveAs(save.FileName);
             workbook?.Dispose();
+            
         }
 
         _compare = null;
         Compare.ComparisonCompleted = true;
+
+        try
+        {
+            Task.Run(async () =>
+            {
+                while (!File.Exists(save.FileName))
+                {
+                    await Task.Delay(10);
+                }
+
+            });
+
+            Process.Start($@"C:\\Program Files\\Microsoft Office\\root\\Office16\\Excel.exe", save.FileName);
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine(exception);
+            throw;
+        }
+
+        
     }
 
     private void CancelBT_Click(object sender, EventArgs e) => _compare?.Cancel();

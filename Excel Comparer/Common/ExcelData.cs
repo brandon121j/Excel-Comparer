@@ -1,5 +1,4 @@
 ﻿using ClosedXML.Excel;
-
 namespace Excel_Comparer.Common;
 
 public static class ExcelData
