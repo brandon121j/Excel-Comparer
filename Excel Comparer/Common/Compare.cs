@@ -11,10 +11,10 @@ public class Compare
     public delegate void WorkCompleteEventHandler(object sender, RunWorkerCompletedEventArgs e);
 
     private readonly BackgroundWorker _bw;
-    public (string, string) PrimaryKeys { get; set; }
+
     public Compare()
     {
-    _bw = new BackgroundWorker
+        _bw = new BackgroundWorker
         {
             WorkerSupportsCancellation = true,
             WorkerReportsProgress = true
@@ -25,9 +25,9 @@ public class Compare
         _bw.ProgressChanged += BW_ProgressChanged;
     }
 
-    public static bool ComparisonCompleted { get; set; } = false;
+    public (string, string) PrimaryKeys { get; set; }
 
-    private static string Connection(string excelFile) => $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={excelFile};Extended Properties=\'Excel 12.0 Xml;HDR=YES;\';";
+    public static bool ComparisonCompleted { get; set; } = false;
 
     public event ProgressChangedEventHandler? ProgressChanged;
 
@@ -38,7 +38,6 @@ public class Compare
     protected void RaiseWorkCompleteEvent(RunWorkerCompletedEventArgs e) => WorkComplete?.Invoke(this, e);
 
     public void Cancel() => _bw?.CancelAsync();
-
 
     private void BW_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e) => RaiseWorkCompleteEvent(e);
 
@@ -56,8 +55,10 @@ public class Compare
 
         if (ExcelData.ExcelFile1 == null || ExcelData.ExcelFile2 == null) return;
 
-        var excel1DT = DataFetcher(ExcelData.ExcelFile1, SelectedColumns(excelCriteria.Keys.ToList()));
-        var excel2DT = DataFetcher(ExcelData.ExcelFile2, SelectedColumns(excelCriteria.Values.ToList()), "Excel2");
+        var excel1DT = DataFetcher(ExcelData.ExcelFile1, "Excel1", SelectedColumns(excelCriteria.Keys.ToList()));
+        var excel2DT = DataFetcher(ExcelData.ExcelFile2, "Excel2", SelectedColumns(excelCriteria.Values.ToList()));
+        var excelOG = DataFetcher(ExcelData.ExcelFile1);
+
 
         List<string> differences = new();
 
@@ -76,13 +77,12 @@ public class Compare
             var excel1Record = excel1PK.Equals("None") ? row[excel1Col.FirstOrDefault()].ToString() : row[excel1PK];
             var excel2Select = excel2Pk.Equals("None") ? $"[{excel2Col.FirstOrDefault()}] like '{excel1Record}'" : $"[{excel2Pk}] like '{excel1Record}'";
 
-            var excel2Rows = excel2DT.Select(excel2Select).ToList();
+            var excel2Rows = excel2DT.Select(excel2Select);
 
-            if (excel2Rows.Count > 0)
+            if (excel2Rows.Length > 0)
             {
                 var hasChanged = row.ItemArray
                     .Where((val, i) => !val.Equals(excel2Rows[0][excel2Col[i]])).ToList();
-
 
                 if (hasChanged.Count == 0)
                 {
@@ -96,7 +96,7 @@ public class Compare
                     {
                         var column = excel2Col.FirstOrDefault(x => row[x].Equals(hasChanged[d]));
 
-                        sb.Append($"{column}: {hasChanged[d]}, ");
+                        sb.Append($"{column}: {excel2Rows[0][column]}, ");
                     }
 
                     differences.Add($"UPDATED: {sb}".TrimEnd().TrimEnd(','));
@@ -110,7 +110,7 @@ public class Compare
 
         _bw.ReportProgress(75, "Returning Results");
 
-        e.Result = ConvertToExcel(differences);
+        e.Result = ConvertToExcel(excelOG, differences);
 
         _bw.ReportProgress(100, "Comparison Complete!");
 
@@ -118,25 +118,21 @@ public class Compare
     }
 
 
-    private static XLWorkbook ConvertToExcel(IReadOnlyList<string> differences)
+    private static XLWorkbook ConvertToExcel(DataTable dt, IReadOnlyList<string> differences)
     {
-        using XLWorkbook ogWorkbook = new(ExcelData.ExcelFile1);
-
         XLWorkbook workbook = new();
 
-        ogWorkbook.Worksheets.FirstOrDefault()?.CopyTo(workbook, "Comparison");
+        var worksheet = workbook.Worksheets.Add(dt);
 
-        var worksheet = workbook.Worksheet("Comparison");
-
-        worksheet.Style = null;
+        var table = worksheet.Tables.FirstOrDefault();
 
         var diffCol = worksheet.LastColumnUsed().ColumnNumber() + 1;
 
         var lastRow = worksheet.LastRowUsed().RowNumber();
 
-        worksheet.Cell(1, diffCol).Value = "Differences";
+        table.InsertColumnsAfter(1);
 
-        worksheet.Range(worksheet.Cell(1, 1), worksheet.Cell(lastRow, diffCol)).CreateTable();
+        worksheet.Cell(1, diffCol).Value = "Differences";
 
         for (int i = 2, x = 0; i < lastRow + 1; i++, x++)
         {
@@ -152,26 +148,30 @@ public class Compare
         }
 
 
-        worksheet.Tables.FirstOrDefault().Theme = new XLTableTheme("None");
+        table.Theme = new XLTableTheme("None");
 
         worksheet.Columns().AdjustToContents();
 
         return workbook;
     }
 
-    private static DataTable DataFetcher(string currentWB, string selection = "*", string name = "Excel1")
+    private static DataTable DataFetcher(string currentWB, string name, string selection = "*")
     {
         DataTable dataTable;
 
         try
         {
-            using XLWorkbook workbook = new(currentWB);
+            var connection = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={currentWB};Extended Properties=\'Excel 12.0 Xml;HDR=YES;\';";
 
-            using OleDbConnection excelConn = new(Connection(currentWB));
+            using OleDbConnection excelConn = new(connection);
 
             excelConn.Open();
 
-            using OleDbCommand command = new($"SELECT {selection} FROM [{workbook.Worksheets.FirstOrDefault()}$]", excelConn);
+            var dtSchema = excelConn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+
+            var worksheet = dtSchema.Rows[0]["TABLE_NAME"].ToString();
+
+            using OleDbCommand command = new($"SELECT {selection} FROM [{worksheet}]", excelConn);
 
             using OleDbDataAdapter adapter = new() { SelectCommand = command };
 
@@ -182,8 +182,8 @@ public class Compare
             dataTable = dataSet.Tables[0];
 
             foreach (DataRow row in dataTable.Rows)
-                foreach (DataColumn column in dataTable.Columns)
-                    row[column] = row[column].ToString()?.Trim().Replace("'", "");
+            foreach (DataColumn column in dataTable.Columns)
+                row[column] = row[column].ToString()?.Trim().Replace("'", "");
         }
         catch (Exception e)
         {
@@ -192,6 +192,41 @@ public class Compare
         }
 
         return ConvertToStrings(dataTable);
+    }
+
+    private static DataTable DataFetcher(string currentWB)
+    {
+        DataTable dataTable;
+
+        try
+        {
+            var connection = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={currentWB};Extended Properties=\'Excel 12.0 Xml;HDR=YES;\';";
+
+            using OleDbConnection excelConn = new(connection);
+
+            excelConn.Open();
+
+            var dtSchema = excelConn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+
+            var worksheet = dtSchema.Rows[0]["TABLE_NAME"].ToString();
+
+            using OleDbCommand command = new($"SELECT * FROM [{worksheet}]", excelConn);
+
+            using OleDbDataAdapter adapter = new() { SelectCommand = command };
+
+            using DataSet dataSet = new();
+
+            adapter.Fill(dataSet, "Comparison");
+
+            dataTable = dataSet.Tables[0];
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw;
+        }
+
+        return dataTable;
     }
 
     private static string SelectedColumns(List<string> columns)

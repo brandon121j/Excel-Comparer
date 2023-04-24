@@ -1,4 +1,6 @@
-﻿using ClosedXML.Excel;
+﻿using System.Data;
+using System.Data.OleDb;
+using ClosedXML.Excel;
 namespace Excel_Comparer.Common;
 
 public static class ExcelData
@@ -30,11 +32,32 @@ public static class ExcelData
 
         DataChanged = true;
 
-        using var workbook = new XLWorkbook(path);
+        //var isXlsx = Path.GetExtension(path) == ".xlsx";
 
-        var worksheet = workbook.Worksheets.FirstOrDefault() ?? throw new Exception();
+        var connection = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={path};Extended Properties=\'Excel 12.0 Xml;HDR=YES;\';";
+      
 
-        return worksheet.ColumnsUsed().Select(col => col.FirstCellUsed().Value.ToString().Trim()).ToList();
+        using OleDbConnection excelConn = new(connection);
+
+        excelConn.Open();
+
+        var dtSchema = excelConn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+
+        var worksheet = dtSchema.Rows[0]["TABLE_NAME"].ToString();
+
+        using OleDbCommand command = new($"SELECT * FROM [{worksheet}]", excelConn);
+
+        using OleDbDataAdapter adapter = new() { SelectCommand = command };
+
+        using DataSet dataSet = new();
+
+        adapter.Fill(dataSet, "Comparison");
+
+        excelConn.Close();
+
+        var dataTable = dataSet.Tables[0];
+
+        return (from DataColumn col in dataTable.Columns select col.ColumnName).ToList();
     }
 
     public static void ResetData()

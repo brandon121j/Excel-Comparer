@@ -17,7 +17,7 @@ public partial class ImportFile1Control : UserControl
         using OpenFileDialog file1 = new()
         {
             Title = @"Choose Excel File",
-            Filter = @"Excel Files|*.xlsx;",
+            Filter = @"Excel Files|*.xls;*.xlsx;*.xlsm;",
             InitialDirectory = ExcelData.DocumentPath,
             RestoreDirectory = false,
             Multiselect = false
