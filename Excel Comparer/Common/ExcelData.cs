@@ -1,6 +1,6 @@
 ﻿using System.Data;
 using System.Data.OleDb;
-using ClosedXML.Excel;
+
 namespace Excel_Comparer.Common;
 
 public static class ExcelData
@@ -32,10 +32,7 @@ public static class ExcelData
 
         DataChanged = true;
 
-        //var isXlsx = Path.GetExtension(path) == ".xlsx";
-
         var connection = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={path};Extended Properties=\'Excel 12.0 Xml;HDR=YES;\';";
-      
 
         using OleDbConnection excelConn = new(connection);
 

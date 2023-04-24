@@ -87,7 +87,6 @@ public partial class GenerateComparisonControl : UserControl
 
     private void GenerateBT_Click(object sender, EventArgs e)
     {
-
         GeneratingComparison = true;
         loadingPN.Visible = true;
         headerLB.Text = @"Generating Comparison";
@@ -131,21 +130,16 @@ public partial class GenerateComparisonControl : UserControl
             {
                 Task.Run(async () =>
                 {
-                    while (!File.Exists(save.FileName))
-                    {
-                        await Task.Delay(10);
-                    }
-
+                    while (!File.Exists(save.FileName)) await Task.Delay(10);
                 });
 
-                Process.Start($@"C:\\Program Files\\Microsoft Office\\root\\Office16\\Excel.exe", save.FileName);
+                Process.Start(@"C:\\Program Files\\Microsoft Office\\root\\Office16\\Excel.exe", save.FileName);
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
                 throw;
             }
-
         }
 
         _compare = null;

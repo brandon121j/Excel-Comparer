@@ -74,6 +74,12 @@ public class Compare
 
         foreach (DataRow row in excel1DT.Rows)
         {
+            if (_bw.CancellationPending)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             var excel1Record = excel1PK.Equals("None") ? row[excel1Col.FirstOrDefault()].ToString() : row[excel1PK];
             var excel2Select = excel2Pk.Equals("None") ? $"[{excel2Col.FirstOrDefault()}] like '{excel1Record}'" : $"[{excel2Pk}] like '{excel1Record}'";
 
@@ -99,7 +105,7 @@ public class Compare
                         sb.Append($"{column}: {excel2Rows[0][column]}, ");
                     }
 
-                    differences.Add($"UPDATED: {sb}".TrimEnd().TrimEnd(','));
+                    differences.Add($"UPDATED: {sb.ToString().TrimEnd().TrimEnd(',')}");
                 }
             }
             else
@@ -182,8 +188,8 @@ public class Compare
             dataTable = dataSet.Tables[0];
 
             foreach (DataRow row in dataTable.Rows)
-            foreach (DataColumn column in dataTable.Columns)
-                row[column] = row[column].ToString()?.Trim().Replace("'", "");
+                foreach (DataColumn column in dataTable.Columns)
+                    row[column] = row[column].ToString()?.Trim().Replace("'", "");
         }
         catch (Exception e)
         {

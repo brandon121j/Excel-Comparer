@@ -17,7 +17,7 @@ public partial class ImportFile1Control : UserControl
         using OpenFileDialog file1 = new()
         {
             Title = @"Choose Excel File",
-            Filter = @"Excel Files|*.xls;*.xlsx;*.xlsm;",
+            Filter = @"Excel Files|*.xls;*.xlsx;",
             InitialDirectory = ExcelData.DocumentPath,
             RestoreDirectory = false,
             Multiselect = false
@@ -75,7 +75,7 @@ public partial class ImportFile1Control : UserControl
 
         var fileName = Path.GetFullPath(droppedFile?[0] ?? string.Empty);
 
-        if (Path.GetExtension(fileName) == ".xlsx")
+        if (Path.GetExtension(fileName) is ".xlsx" or ".xls")
             DoWork(fileName);
     }
 
@@ -85,7 +85,7 @@ public partial class ImportFile1Control : UserControl
 
         var fileName = Path.GetFullPath(droppedFile?[0] ?? string.Empty);
 
-        if (Path.GetExtension(fileName) == ".xlsx")
+        if (Path.GetExtension(fileName) is ".xlsx" or ".xls")
             DoWork(fileName);
     }
 
