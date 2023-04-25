@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
-using System.Diagnostics;
 using System.Text;
 using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Vml;
 
 namespace Excel_Comparer.Common;
 
@@ -189,13 +187,6 @@ public class Compare
 
             dataTable = dataSet.Tables[0];
 
-            foreach (DataRow row in dataTable.Rows)
-                foreach (DataColumn column in dataTable.Columns)
-                    if (dataTable.Columns[column.ToString()].DataType != typeof(DateTime))
-                        row[column] = row[column].ToString()?.Trim().Replace("'", "");
-
-
-
         }
         catch (Exception e)
         {
@@ -260,6 +251,10 @@ public class Compare
             column.DataType = typeof(string);
 
         newDataTable.Load(dt.CreateDataReader());
+
+        foreach (DataRow row in newDataTable.Rows)
+            foreach (DataColumn column in newDataTable.Columns)
+                row[column] = row[column].ToString()?.Trim().Replace("'", "");
 
         return newDataTable;
     }
