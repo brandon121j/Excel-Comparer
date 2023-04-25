@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Diagnostics;
 using System.Text;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Vml;
 
 namespace Excel_Comparer.Common;
 
@@ -87,8 +89,8 @@ public class Compare
 
             if (excel2Rows.Length > 0)
             {
-                var hasChanged = row.ItemArray
-                    .Where((val, i) => !val.Equals(excel2Rows[0][excel2Col[i]])).ToList();
+                var hasChanged = excel2Rows[0].ItemArray
+                    .Where((val, i) => !val.Equals(row[i])).ToList();
 
                 if (hasChanged.Count == 0)
                 {
@@ -98,11 +100,11 @@ public class Compare
                 {
                     StringBuilder sb = new();
 
-                    for (var d = 0; d < hasChanged.Count; d++)
+                    for (var d = 0; d < excel2Rows[0].ItemArray.Length; d++)
                     {
-                        var column = excel2Col.FirstOrDefault(x => row[x].Equals(hasChanged[d]));
+                        if (!hasChanged.Contains(excel2Rows[0][excel2Col[d]].ToString())) continue;
 
-                        sb.Append($"{column}: {excel2Rows[0][column]}, ");
+                        sb.Append($"{excel1Col[d].Trim()}: {excel2Rows[0][excel2Col[d]]}, ");
                     }
 
                     differences.Add($"UPDATED: {sb.ToString().TrimEnd().TrimEnd(',')}");
@@ -189,7 +191,11 @@ public class Compare
 
             foreach (DataRow row in dataTable.Rows)
                 foreach (DataColumn column in dataTable.Columns)
-                    row[column] = row[column].ToString()?.Trim().Replace("'", "");
+                    if (dataTable.Columns[column.ToString()].DataType != typeof(DateTime))
+                        row[column] = row[column].ToString()?.Trim().Replace("'", "");
+
+
+
         }
         catch (Exception e)
         {
