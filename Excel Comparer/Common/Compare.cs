@@ -186,7 +186,6 @@ public class Compare
             adapter.Fill(dataSet, name);
 
             dataTable = dataSet.Tables[0];
-
         }
         catch (Exception e)
         {
@@ -253,8 +252,8 @@ public class Compare
         newDataTable.Load(dt.CreateDataReader());
 
         foreach (DataRow row in newDataTable.Rows)
-            foreach (DataColumn column in newDataTable.Columns)
-                row[column] = DateTime.TryParse(row[column].ToString(), out var dateTime) ? dateTime.ToString("MM/dd/yyyy").Trim() : row[column].ToString()?.Trim().Replace("'", "");
+        foreach (DataColumn column in newDataTable.Columns)
+            row[column] = DateTime.TryParse(row[column].ToString(), out var dateTime) ? dateTime.ToString("MM/dd/yyyy").Trim() : row[column].ToString()?.Trim().Replace("'", "");
 
         return newDataTable;
     }
