@@ -254,7 +254,7 @@ public class Compare
 
         foreach (DataRow row in newDataTable.Rows)
             foreach (DataColumn column in newDataTable.Columns)
-                row[column] = row[column].ToString()?.Trim().Replace("'", "");
+                row[column] = DateTime.TryParse(row[column].ToString(), out var dateTime) ? dateTime.ToString("MM/dd/yyyy").Trim() : row[column].ToString()?.Trim().Replace("'", "");
 
         return newDataTable;
     }
