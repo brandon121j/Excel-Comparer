@@ -119,21 +119,21 @@ public partial class GenerateComparisonControl : UserControl
         {
             if (save.ShowDialog() == DialogResult.OK)
             {
-
-                workbook?.SaveAs(save.FileName);
+                var excelName = save.FileName;
+                workbook?.SaveAs(excelName);
                 workbook?.Dispose();
 
                 try
                 {
                     Task.Run(async () =>
                     {
-                        while (!File.Exists(save.FileName)) await Task.Delay(10);
+                        while (!File.Exists(excelName)) await Task.Delay(10);
                     });
 
                     var process = new ProcessStartInfo
                     {
                         FileName = @"C:\\Program Files\\Microsoft Office\\root\\Office16\\Excel.exe",
-                        Arguments = $"\"{save.FileName}\"",
+                        Arguments = $"\"{excelName}\"",
                         UseShellExecute = true,
                     };
 
