@@ -115,30 +115,35 @@ public partial class GenerateComparisonControl : UserControl
 
         using var workbook = e.Result as XLWorkbook;
 
-        SaveFileDialog save = new()
+        using (SaveFileDialog save = new() { RestoreDirectory = true, DefaultExt = "xlsx", Filter = @"Excel Files|*.xlsx;" })
         {
-            RestoreDirectory = true,
-            DefaultExt = "xlsx",
-            Filter = @"Excel Files|*.xls;*.xlsx;"
-        };
-        if (save.ShowDialog() == DialogResult.OK)
-        {
-            workbook?.SaveAs(save.FileName);
-            workbook?.Dispose();
-
-            try
+            if (save.ShowDialog() == DialogResult.OK)
             {
-                Task.Run(async () =>
+
+                workbook?.SaveAs(save.FileName);
+                workbook?.Dispose();
+
+                try
                 {
-                    while (!File.Exists(save.FileName)) await Task.Delay(10);
-                });
+                    Task.Run(async () =>
+                    {
+                        while (!File.Exists(save.FileName)) await Task.Delay(10);
+                    });
 
-                Process.Start(@"C:\\Program Files\\Microsoft Office\\root\\Office16\\Excel.exe", save.FileName);
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception);
-                throw;
+                    var process = new ProcessStartInfo
+                    {
+                        FileName = @"C:\\Program Files\\Microsoft Office\\root\\Office16\\Excel.exe",
+                        Arguments = $"\"{save.FileName}\"",
+                        UseShellExecute = true,
+                    };
+
+                    Process.Start(process);
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+                    throw;
+                }
             }
         }
 
